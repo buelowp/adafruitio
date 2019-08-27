@@ -1,12 +1,11 @@
-project(adaio)
+cmake_minimum_required (VERSION 3.0.0 FATAL_ERROR)
+project (adafruitio)
 
-cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+file (GLOB SOURCE "*.cpp")
+file (GLOB HEADERS "*.h")
 
-include_directories(${Qt5Core_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
+add_library (${PROJECT_NAME} SHARED ${SOURCE})
+target_link_libraries (${PROJECT_NAME} -lmosquittopp)
 
-set(adaio_SRCS adaio.cpp main.cpp)
-
-add_executable(adaio ${adaio_SRCS})
-target_link_libraries(adaio -lmosquittopp)
-
-install(TARGETS adaio RUNTIME DESTINATION bin)
+install (TARGETS ${PROJECT_NAME} DESTINATION lib)
+install (FILES ${HEADERS} DESTINATION include)
