@@ -22,6 +22,8 @@ public:
     AdafruitIO(std::string &id, std::string &host, std::string &username, std::string &password, int port);
     virtual ~AdafruitIO();
 
+    bool isConnected() { return m_connected; }
+    
     void setGenericCallback(std::function<void(CallbackType, int)> cbk) { m_genericCallback = cbk; }
     void setMessageCallback(std::function<void(int, std::string, uint32_t*, int)> cbk) { m_messageCallback = cbk; }
     void setErrorCallback(std::function<void(std::string, int)> cbk) { m_errorCallback = cbk; }
@@ -46,6 +48,7 @@ private:
     std::function<void(std::string, int)> m_errorCallback;
     int m_port;
     int m_debug;
+    bool m_connected;
 };
 
 #endif // AdafruitIO_H

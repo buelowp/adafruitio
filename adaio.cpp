@@ -16,6 +16,7 @@ AdafruitIO::AdafruitIO(std::string &id, std::string &host, std::string &username
     m_name(id), m_host(host), m_user(username), m_pass(password), m_port(port)
 {
     m_debug = false;
+    m_connected = false;
     mosqpp::lib_init();			// Initialize libmosquitto
 
 	int keepalive = 120; // seconds
@@ -48,12 +49,14 @@ AdafruitIO::~AdafruitIO()
 void AdafruitIO::on_connect(int rc)
 {
     if (rc != 0) {
-        printf("Unable to connect with rc = %d\n", rc);
+        std::cerr << __FUNCTION__ << ": Unable to connect with rc " << rc << std::endl;
+        m_connected = false;
         return;
     }
     
+    m_connected = true;
     if (m_debug)
-        std::cout << __FUNCTION__ << "Connected with code " << rc << std::endl;
+        std::cerr << __FUNCTION__ << ": Connected with code " << rc << std::endl;
     
     if (m_genericCallback) {
         try {
@@ -68,6 +71,9 @@ void AdafruitIO::on_connect(int rc)
 
 void AdafruitIO::on_disconnect(int rc)
 {
+    if (m_debug)
+        std::cerr << __FUNCTION__ << ": Disconnected with code " << rc << std::endl;
+    
     if (m_genericCallback) {
         try {
             m_genericCallback(CallbackType::DISCONNECT, rc);
@@ -77,6 +83,7 @@ void AdafruitIO::on_disconnect(int rc)
             return;
         }
     }
+    m_connected = false;
 }
 
 void AdafruitIO::on_subscribe(int mid, int, const int*)
